@@ -1,9 +1,12 @@
 spring:
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://192.168.1.66:3306/test?rewriteBatchedStatements=true&useUnicode=true&characterEncoding=utf8&useSSL=false
-        username: root
-        password: qingshi123
+        #url: jdbc:mysql://192.168.1.66:3306/test?rewriteBatchedStatements=true&useUnicode=true&characterEncoding=utf8&useSSL=false
+        #username: root
+        #password: qingshi123
+        url: jdbc:mysql://111.231.18.164:33309/test?rewriteBatchedStatements=true&useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: edi
+        password: Mko0-pl,
         hikari:
             maximumPoolSize: 50
             data-source-properties:

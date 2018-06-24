@@ -12,7 +12,6 @@ import com.ex.commanddemo.service.WalletService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.transaction.Transactional;
 
 /**
  * @author edison
@@ -28,8 +27,6 @@ public class ReduceMoneyCommandHandler implements CommandHandler<ReduceMoneyComm
 	private EventService eventService;
 
 	@Override
-	@Transactional
-	@org.springframework.transaction.annotation.Transactional
 	public ExecutionResult on(ReduceMoneyCommand command, EventBus eventBus, CommandHandlerContext context) {
 		if(walletService==null)
 			walletService = context.getSpringContext().getBean(WalletService.class);

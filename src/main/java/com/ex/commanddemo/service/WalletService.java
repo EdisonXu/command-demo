@@ -19,7 +19,6 @@ public class WalletService {
 	private WalletRepository repository;
 
 	@Transactional
-	@javax.transaction.Transactional
 	public void reduce(long id, long value){
 		Wallet wallet = repository.findOne(id);
 		if(wallet.getValue()<value)

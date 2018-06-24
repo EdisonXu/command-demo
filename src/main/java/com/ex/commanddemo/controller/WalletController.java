@@ -4,10 +4,14 @@ import com.ex.commanddemo.concurrent.command.BatchDbCommand;
 import com.ex.commanddemo.concurrent.command.ExecutionResult;
 import com.ex.commanddemo.concurrent.command.ReduceMoneyCommand;
 import com.ex.commanddemo.concurrent.dispatcher.CommandDispatcher;
+import com.ex.commanddemo.domain.AuditLog;
 import com.ex.commanddemo.domain.ReduceMoneyEvent;
 import com.ex.commanddemo.domain.Wallet;
+import com.ex.commanddemo.repo.AuditLogRepository;
 import com.ex.commanddemo.repo.WalletRepository;
+import com.ex.commanddemo.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,14 +30,29 @@ public class WalletController {
 	@Autowired
 	private CommandDispatcher commandDispatcher;
 
+	@Autowired
+	private AuditLogRepository auditLogRepository;
+
 	@PostMapping
 	public Wallet create(@RequestBody Wallet wallet){
 		return repository.save(wallet);
 	}
 
 	@PostMapping("/use")
+	@Transactional
 	public ExecutionResult use(@RequestBody ReduceMoneyEvent reduceMoneyEvent){
-		return commandDispatcher.dispatchToQueueAndGet(new ReduceMoneyCommand(reduceMoneyEvent), "wallet", 1);
+		// add the auit log to verify the transaction rollback
+		auditLogRepository.save(new AuditLog());
+		ExecutionResult result = commandDispatcher.dispatchToQueueAndGet(new ReduceMoneyCommand(reduceMoneyEvent), "wallet", 1);
+		switch (result.getResultCode()){
+			case SUCCESS:
+				break;
+			case FAILED:
+				throw new RuntimeException("Failed..."+result.getMsg());
+			default:
+				throw new RuntimeException("Timeout");
+		}
+		return result;
 	}
 
 	@PostMapping("/useb")

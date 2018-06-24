@@ -45,17 +45,19 @@ public class QueuedCommandExecutor extends AbstractCommandExecutor {
                 }
                 command = cMsg.getCommand();
                 LOGGER.debug("Begin to handle command {}", command);
-
+                startTransaction();
                 cMsg.setResult(Optional.ofNullable(commandConfig.getCommandHandlerRegistry().find(command))
                     .map(handler-> handler.on(cMsg.getCommand(), eventBusProxy, context))
                     .orElse(ExecutionResult.timeoutResult()));
 
                 if(cMsg.getResult().getResultCode().equals(ExecutionResult.Code.SUCCESS))
-                	eventBusProxy.commit();
+                    commit();
+                	//eventBusProxy.commit();
             }catch (Exception e){
                 LOGGER.error("", e);
                 if(cMsg!=null)
                     cMsg.setResultCode(ExecutionResult.Code.FAILED, e.getMessage());
+                rollback(command);
             } finally{
                 /*if(command instanceof DbCommand){
                     context.getSpringEventPublisher().publishEvent(new CommandTransactionEvent(cMsg));
