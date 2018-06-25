@@ -4,6 +4,8 @@ import com.ex.commanddemo.concurrent.command.BatchDbCommand;
 import com.ex.commanddemo.concurrent.command.ExecutionResult;
 import com.ex.commanddemo.concurrent.command.ReduceMoneyCommand;
 import com.ex.commanddemo.concurrent.dispatcher.CommandDispatcher;
+import com.ex.commanddemo.concurrent.exception.CommandExecuteFailedException;
+import com.ex.commanddemo.concurrent.exception.CommandExecuteTimeoutException;
 import com.ex.commanddemo.domain.AuditLog;
 import com.ex.commanddemo.domain.ReduceMoneyEvent;
 import com.ex.commanddemo.domain.Wallet;
@@ -48,9 +50,9 @@ public class WalletController {
 			case SUCCESS:
 				break;
 			case FAILED:
-				throw new RuntimeException("Failed..."+result.getMsg());
+				throw new CommandExecuteFailedException(result.getMsg());
 			default:
-				throw new RuntimeException("Timeout");
+				throw new CommandExecuteTimeoutException("Timeout");
 		}
 		return result;
 	}

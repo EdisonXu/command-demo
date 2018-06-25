@@ -1,5 +1,6 @@
 package com.ex.commanddemo.service;
 
+import com.ex.commanddemo.concurrent.exception.NoEnoughInventoryException;
 import com.ex.commanddemo.domain.ReduceMoneyEvent;
 import com.ex.commanddemo.repo.MoneyEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class EventService {
 			switcher = true;
 		else{
 			switcher = false;
-			throw new ValidationException("No enough inventory!");
+			throw new NoEnoughInventoryException("No enough inventory!");
 		}
 		repository.save(event);
 	}

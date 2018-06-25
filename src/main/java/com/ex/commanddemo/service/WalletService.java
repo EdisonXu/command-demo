@@ -1,5 +1,6 @@
 package com.ex.commanddemo.service;
 
+import com.ex.commanddemo.concurrent.exception.NoEnoughProductScaleException;
 import com.ex.commanddemo.domain.Wallet;
 import com.ex.commanddemo.repo.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class WalletService {
 	public void reduce(long id, long value){
 		Wallet wallet = repository.findOne(id);
 		if(wallet.getValue()<value)
-			throw new ValidationException("余额不足");
+			throw new NoEnoughProductScaleException("余额不足");
 		wallet.setValue(wallet.getValue()-value);
 		repository.save(wallet);
 	}
